@@ -22,7 +22,11 @@ export default function Home() {
         <p className="mx-auto mt-4 max-w-2xl text-stone-700">{event.intro}</p>
       </header>
 
-      <section className="mb-12 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
+      <Suspense fallback={<Gallery costumes={costumes} taken={[]} />}>
+        <LiveGallery />
+      </Suspense>
+
+      <section className="mt-14 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
         <h2 className="text-xl font-bold">How it works</h2>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-stone-700">
           {event.rules.map((rule) => (
@@ -30,10 +34,6 @@ export default function Home() {
           ))}
         </ul>
       </section>
-
-      <Suspense fallback={<Gallery costumes={costumes} taken={[]} />}>
-        <LiveGallery />
-      </Suspense>
     </main>
   );
 }
