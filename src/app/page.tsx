@@ -5,6 +5,7 @@ import { getCostumes } from "@/lib/costumes";
 import { getTaken } from "@/lib/taken";
 import { getAllCostumes } from "@/lib/uploads";
 import { Gallery } from "./gallery";
+import { VisitTracker } from "./visit-tracker";
 
 export default function Home() {
   const costumes = getCostumes();
@@ -34,6 +35,11 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <footer className="mt-10 text-center text-xs text-stone-400">
+        Website by Luisa Guzman
+      </footer>
+      <VisitTracker />
     </main>
   );
 }

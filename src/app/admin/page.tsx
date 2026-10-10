@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { isAdmin } from "@/lib/auth";
 import { getTaken } from "@/lib/taken";
 import { getAllCostumes } from "@/lib/uploads";
+import { getVisitStats, type VisitStats } from "@/lib/visits";
 import { logOutAction } from "./actions";
 import { AddCostumeForm } from "./add-costume-form";
 import { AdminList } from "./admin-list";
@@ -34,7 +35,11 @@ async function Admin() {
     );
   }
 
-  const [costumes, taken] = await Promise.all([getAllCostumes(), getTaken()]);
+  const [costumes, taken, visits] = await Promise.all([
+    getAllCostumes(),
+    getTaken(),
+    getVisitStats(),
+  ]);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 pb-16">
@@ -51,8 +56,58 @@ async function Admin() {
           </button>
         </form>
       </header>
+      <VisitStatsCard stats={visits} />
       <AddCostumeForm />
       <AdminList costumes={costumes} taken={taken} />
     </main>
+  );
+}
+
+function VisitStatsCard({ stats }: { stats: VisitStats }) {
+  const weekday = (day: string) =>
+    new Date(`${day}T12:00:00`).toLocaleDateString("en-US", {
+      weekday: "short",
+    });
+  const max = Math.max(1, ...stats.lastDays.map((d) => d.visits));
+
+  return (
+    <section className="mb-6 rounded-2xl bg-white p-4 ring-1 ring-stone-200">
+      <h2 className="text-sm font-semibold text-stone-500">
+        Visits <span className="font-normal">(only you can see this)</span>
+      </h2>
+      <dl className="mt-2 grid grid-cols-3 gap-2 text-center">
+        {[
+          ["Today", stats.lastDays[0]?.visits ?? 0],
+          ["Total visits", stats.total],
+          ["Unique visitors", stats.unique],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-xl bg-stone-50 p-2">
+            <dd className="text-2xl font-bold tabular-nums">{value}</dd>
+            <dt className="text-xs text-stone-500">{label}</dt>
+          </div>
+        ))}
+      </dl>
+      <ul
+        className="mt-3 flex h-16 items-end gap-1.5"
+        aria-label="Visits in the last 7 days"
+      >
+        {stats.lastDays.toReversed().map((d) => (
+          <li
+            key={d.day}
+            className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+            title={`${d.day}: ${d.visits}`}
+          >
+            <span className="text-[10px] tabular-nums text-stone-500">
+              {d.visits}
+            </span>
+            <span
+              className="w-full rounded-t bg-orange-400"
+              style={{ height: `${(d.visits / max) * 100}%`, minHeight: 2 }}
+            />
+            <span className="text-[10px] text-stone-400">{weekday(d.day)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

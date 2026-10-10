@@ -11,7 +11,7 @@ export const event = {
   rules: [
     "Donate: drop clean, used costumes at the Fir, Cedar or Cypress entrance, starting Thursday, October 1.",
     "We sort the costumes by size and make them available for pickup after October 5.",
-    "Pick up: find a costume below and go to the place shown on it.",
+    "Pick up: find a costume above and go to the place shown on it.",
     "No costume to donate? You're still welcome to pick one up!",
   ],
 };
