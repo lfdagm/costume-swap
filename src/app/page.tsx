@@ -1,8 +1,9 @@
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { event } from "@/config";
-import { type Costume, getCostumes } from "@/lib/costumes";
+import { getCostumes } from "@/lib/costumes";
 import { getTaken } from "@/lib/taken";
+import { getAllCostumes } from "@/lib/uploads";
 import { Gallery } from "./gallery";
 
 export default function Home() {
@@ -31,14 +32,15 @@ export default function Home() {
       </section>
 
       <Suspense fallback={<Gallery costumes={costumes} taken={[]} />}>
-        <LiveGallery costumes={costumes} />
+        <LiveGallery />
       </Suspense>
     </main>
   );
 }
 
-// Reads the taken list on every visit so it's always current.
-async function LiveGallery({ costumes }: { costumes: Costume[] }) {
+// Reads uploaded costumes and the taken list on every visit so they're current.
+async function LiveGallery() {
   await connection();
-  return <Gallery costumes={costumes} taken={await getTaken()} />;
+  const [costumes, taken] = await Promise.all([getAllCostumes(), getTaken()]);
+  return <Gallery costumes={costumes} taken={taken} />;
 }

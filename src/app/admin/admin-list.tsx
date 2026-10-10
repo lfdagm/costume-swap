@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useOptimistic, useState, useTransition } from "react";
 import { entranceLabel, entrances } from "@/config";
 import type { Costume } from "@/lib/costumes";
-import { setTakenAction } from "./actions";
+import { deleteCostumeAction, setTakenAction } from "./actions";
 
 export function AdminList({
   costumes,
@@ -36,6 +36,18 @@ export function AdminList({
         setError(
           "Couldn't save that change. Check your connection and try again.",
         );
+      }
+    });
+  }
+
+  function remove(costume: Costume) {
+    if (!confirm(`Delete “${costume.name}” from the site?`)) return;
+    setError(null);
+    startTransition(async () => {
+      try {
+        await deleteCostumeAction(costume.id);
+      } catch {
+        setError("Couldn't delete that costume. Try again.");
       }
     });
   }
@@ -84,6 +96,15 @@ export function AdminList({
                     >
                       {costume.name || "Costume"}
                     </p>
+                    {costume.uploaded && (
+                      <button
+                        onClick={() => remove(costume)}
+                        aria-label={`Delete ${costume.name}`}
+                        className="shrink-0 rounded-full px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    )}
                     <button
                       onClick={() => toggle(costume.id)}
                       className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${

@@ -1,18 +1,7 @@
-import { Redis } from "@upstash/redis";
+import { getRedis } from "./redis";
 
-// Costume ids (photo file names) that have been taken, stored as a Redis set.
+// Costume ids that have been taken, stored as a Redis set.
 const KEY = "taken";
-
-let redis: Redis | null = null;
-
-function getRedis(): Redis | null {
-  if (!process.env.KV_REST_API_URL && !process.env.UPSTASH_REDIS_REST_URL) return null;
-  redis ??= new Redis({
-    url: (process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL)!,
-    token: (process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN)!,
-  });
-  return redis;
-}
 
 export async function getTaken(): Promise<string[]> {
   const db = getRedis();

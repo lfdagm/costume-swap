@@ -7,6 +7,7 @@ export type Costume = {
   src: string;
   name: string;
   entranceId: string;
+  uploaded?: boolean; // added from /admin rather than the photo folders
 };
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|avif|gif|svg)$/i;
@@ -33,7 +34,9 @@ export function getCostumes(): Costume[] {
 
     for (const file of fs.readdirSync(dir).sort()) {
       if (/\.heic$/i.test(file)) {
-        console.warn(`Skipping ${entrance.id}/${file}: HEIC isn't supported by most browsers, export it as JPG.`);
+        console.warn(
+          `Skipping ${entrance.id}/${file}: HEIC isn't supported by most browsers, export it as JPG.`,
+        );
         continue;
       }
       if (!IMAGE_EXT.test(file)) continue;

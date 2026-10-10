@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { isAdmin } from "@/lib/auth";
-import { getCostumes } from "@/lib/costumes";
 import { getTaken } from "@/lib/taken";
+import { getAllCostumes } from "@/lib/uploads";
 import { logOutAction } from "./actions";
+import { AddCostumeForm } from "./add-costume-form";
 import { AdminList } from "./admin-list";
 import { LoginForm } from "./login-form";
 
@@ -33,13 +34,13 @@ async function Admin() {
     );
   }
 
-  const [costumes, taken] = [getCostumes(), await getTaken()];
+  const [costumes, taken] = await Promise.all([getAllCostumes(), getTaken()]);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 pb-16">
       <header className="flex items-center justify-between gap-4 py-6">
         <div>
-          <h1 className="text-2xl font-bold">Mark costumes as taken</h1>
+          <h1 className="text-2xl font-bold">Manage costumes</h1>
           <p className="text-sm text-stone-600">
             Changes show on the public site right away.
           </p>
@@ -50,6 +51,7 @@ async function Admin() {
           </button>
         </form>
       </header>
+      <AddCostumeForm />
       <AdminList costumes={costumes} taken={taken} />
     </main>
   );
