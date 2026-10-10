@@ -56,9 +56,9 @@ async function Admin() {
           </button>
         </form>
       </header>
-      <VisitStatsCard stats={visits} />
       <AddCostumeForm />
       <AdminList costumes={costumes} taken={taken} />
+      <VisitStatsCard stats={visits} />
     </main>
   );
 }
@@ -71,7 +71,7 @@ function VisitStatsCard({ stats }: { stats: VisitStats }) {
   const max = Math.max(1, ...stats.lastDays.map((d) => d.visits));
 
   return (
-    <section className="mb-6 rounded-2xl bg-white p-4 ring-1 ring-stone-200">
+    <section className="mt-10 rounded-2xl bg-white p-4 ring-1 ring-stone-200">
       <h2 className="text-sm font-semibold text-stone-500">
         Visits <span className="font-normal">(only you can see this)</span>
       </h2>
