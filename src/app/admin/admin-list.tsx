@@ -59,6 +59,12 @@ export function AdminList({
           {error}
         </p>
       )}
+      <p className="rounded-2xl bg-white p-4 text-sm text-stone-600 ring-1 ring-stone-200">
+        <span className="text-2xl font-bold text-stone-900 tabular-nums">
+          {costumes.filter((c) => optimisticTaken.has(c.id)).length}
+        </span>{" "}
+        of {costumes.length} costumes taken so far
+      </p>
       {entrances.map((entrance) => {
         const here = costumes.filter((c) => c.entranceId === entrance.id);
         if (here.length === 0) return null;
