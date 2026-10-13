@@ -111,8 +111,6 @@ export function Gallery({
           </h2>
           <p className="text-sm text-stone-500">
             {availableCount} available
-            {availableCount < visible.length &&
-              ` · ${visible.length - availableCount} taken`}
           </p>
         </div>
 

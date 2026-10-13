@@ -13,10 +13,7 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pb-16">
       <header className="py-10 text-center sm:py-14">
-        <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">
-          {event.organizer}
-        </p>
-        <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
           🎃 {event.title}
         </h1>
         <p className="mt-2 text-lg font-medium text-stone-600">{event.dates}</p>
