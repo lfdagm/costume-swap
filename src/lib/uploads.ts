@@ -1,4 +1,5 @@
 import { del, put } from "@vercel/blob";
+import sharp from "sharp";
 import { entrances } from "@/config";
 import { type Costume, getCostumes } from "./costumes";
 import { getRedis } from "./redis";
@@ -38,7 +39,16 @@ export async function addCostume(
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
   const id = `upload-${Date.now()}-${slug || "costume"}.jpg`;
-  const blob = await put(`costumes/${id}`, photo, {
+  // Re-encode on the server too: this rejects anything that isn't really a
+  // photo and guarantees no metadata (like GPS) is kept.
+  const jpeg = await sharp(Buffer.from(await photo.arrayBuffer()), {
+    limitInputPixels: 50_000_000,
+  })
+    .rotate()
+    .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 80 })
+    .toBuffer();
+  const blob = await put(`costumes/${id}`, jpeg, {
     access: "public",
     contentType: "image/jpeg",
   });

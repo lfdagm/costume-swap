@@ -1,4 +1,5 @@
 import { isAdmin } from "@/lib/auth";
+import { canCountVisit } from "@/lib/ratelimit";
 import { recordVisit } from "@/lib/visits";
 
 export async function POST(request: Request) {
@@ -7,6 +8,6 @@ export async function POST(request: Request) {
     return new Response(null, { status: 400 });
   }
   // Don't count volunteers checking the site.
-  if (!(await isAdmin())) await recordVisit(id);
+  if (!(await isAdmin()) && (await canCountVisit())) await recordVisit(id);
   return new Response(null, { status: 204 });
 }

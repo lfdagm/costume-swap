@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
+import { canTryLogin, recordLoginFailure } from "./ratelimit";
 
 const COOKIE = "costume-admin";
 
@@ -22,9 +23,15 @@ export async function isAdmin(): Promise<boolean> {
   return !!expected && !!actual && safeEqual(actual, expected);
 }
 
-export async function logIn(password: string): Promise<boolean> {
+export async function logIn(
+  password: string,
+): Promise<"ok" | "wrong" | "too-many"> {
+  if (!(await canTryLogin())) return "too-many";
   const expected = process.env.ADMIN_PASSWORD;
-  if (!expected || !safeEqual(password, expected)) return false;
+  if (!expected || !safeEqual(password, expected)) {
+    await recordLoginFailure();
+    return "wrong";
+  }
   (await cookies()).set(COOKIE, sessionValue()!, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -32,7 +39,7 @@ export async function logIn(password: string): Promise<boolean> {
     maxAge: 60 * 60 * 24 * 60,
     path: "/",
   });
-  return true;
+  return "ok";
 }
 
 export async function logOut(): Promise<void> {

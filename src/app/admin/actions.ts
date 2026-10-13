@@ -11,8 +11,10 @@ export async function logInAction(
   _prev: string | null,
   formData: FormData,
 ): Promise<string | null> {
-  const ok = await logIn(String(formData.get("password") ?? ""));
-  if (!ok) return "Wrong password, try again.";
+  const result = await logIn(String(formData.get("password") ?? ""));
+  if (result === "too-many")
+    return "Too many attempts. Wait 15 minutes and try again.";
+  if (result === "wrong") return "Wrong password, try again.";
   redirect("/admin");
 }
 
@@ -50,7 +52,7 @@ export async function addCostumeAction(
     await addCostume(name, entranceId, photo);
   } catch (e) {
     console.error(e);
-    return "Couldn't save the costume. Try again.";
+    return "Couldn't save the costume. Make sure the file is a photo and try again.";
   }
   revalidatePath("/");
   revalidatePath("/admin");
