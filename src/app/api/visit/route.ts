@@ -8,6 +8,10 @@ export async function POST(request: Request) {
     return new Response(null, { status: 400 });
   }
   // Don't count volunteers checking the site.
-  if (!(await isAdmin()) && (await canCountVisit())) await recordVisit(id);
+  try {
+    if (!(await isAdmin()) && (await canCountVisit())) await recordVisit(id);
+  } catch (e) {
+    console.error("Couldn't record visit", e);
+  }
   return new Response(null, { status: 204 });
 }

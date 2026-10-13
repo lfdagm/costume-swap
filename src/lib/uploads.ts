@@ -14,7 +14,14 @@ type Upload = Costume & { createdAt: number };
 async function getUploads(): Promise<Upload[]> {
   const db = getRedis();
   if (!db) return [];
-  const all = await db.hgetall<Record<string, Upload>>(KEY);
+  let all: Record<string, Upload> | null;
+  try {
+    all = await db.hgetall<Record<string, Upload>>(KEY);
+  } catch (e) {
+    // Keep the public site up even if the database is unreachable.
+    console.error("Couldn't load uploaded costumes", e);
+    return [];
+  }
   return Object.values(all ?? {}).toSorted((a, b) => a.createdAt - b.createdAt);
 }
 

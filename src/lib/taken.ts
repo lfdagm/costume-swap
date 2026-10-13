@@ -6,7 +6,13 @@ const KEY = "taken";
 export async function getTaken(): Promise<string[]> {
   const db = getRedis();
   if (!db) return [];
-  return db.smembers(KEY);
+  try {
+    return await db.smembers(KEY);
+  } catch (e) {
+    // Keep the public site up even if the database is unreachable.
+    console.error("Couldn't load taken costumes", e);
+    return [];
+  }
 }
 
 export async function setTaken(id: string, taken: boolean): Promise<void> {
