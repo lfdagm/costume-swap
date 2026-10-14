@@ -108,6 +108,32 @@ function VisitStatsCard({ stats }: { stats: VisitStats }) {
           </li>
         ))}
       </ul>
+      <table className="mt-4 w-full text-sm">
+        <thead className="text-left text-xs text-stone-500">
+          <tr>
+            <th className="py-1 font-normal">Day</th>
+            <th className="py-1 text-right font-normal">Visits</th>
+            <th className="py-1 text-right font-normal">Unique visitors</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-stone-100 tabular-nums">
+          {stats.lastDays.map((d) => (
+            <tr key={d.day}>
+              <td className="py-1">
+                {weekday(d.day)}{" "}
+                <span className="text-stone-400">{d.day.slice(5)}</span>
+              </td>
+              <td className="py-1 text-right">{d.visits}</td>
+              <td className="py-1 text-right">
+                {d.unique ?? <span className="text-stone-400">–</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-2 text-xs text-stone-400">
+        Unique visitors per day are counted from Oct 14 on; earlier days show –.
+      </p>
     </section>
   );
 }
