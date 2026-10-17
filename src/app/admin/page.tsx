@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { isAdmin } from "@/lib/auth";
 import { getTaken } from "@/lib/taken";
@@ -23,6 +24,7 @@ export default function AdminPage() {
 }
 
 async function Admin() {
+  await connection(); // always render at request time (uses the current date)
   if (!(await isAdmin())) {
     return (
       <main className="mx-auto w-full max-w-sm px-4 py-16">
