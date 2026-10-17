@@ -71,7 +71,12 @@ export function AddCostumeForm() {
     );
     const name = String(data.get("name"));
     startTransition(async () => {
-      const error = await addCostumeAction(data);
+      let error: string | null;
+      try {
+        error = await addCostumeAction(data);
+      } catch {
+        error = "Couldn't upload. Reload the page and try again.";
+      }
       if (error) {
         setMessage({ error: true, text: error });
         return;
@@ -132,7 +137,6 @@ export function AddCostumeForm() {
           )}
           <input
             type="file"
-            name="photoFile"
             accept="image/*"
             onChange={onPhotoChange}
             className="block w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-stone-900 file:px-4 file:py-2 file:font-semibold file:text-white"
